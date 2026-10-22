@@ -5,60 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>WhatsApp Sender</title>
   <style>
-    :root { --bg:#f6f8f6; --ink:#16231c; --muted:#5d6b63; --accent:#0f7a4a; }
+    :root { --bg:#f6f8f6; --card:#fff; --ink:#16231c; --muted:#5d6b63; --line:#d9e1dc; --accent:#0f7a4a; --err:#b3261e; }
     @media (prefers-color-scheme: dark) {
-      :root { --bg:#101612; --ink:#e8efea; --muted:#94a39a; --accent:#3ccf86; }
+      :root { --bg:#101612; --card:#18211b; --ink:#e8efea; --muted:#94a39a; --line:#2a362e; --accent:#3ccf86; --err:#ff8a80; }
     }
-    html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
-    iframe { display:block; border:0; width:100%; height:100%; }
-    #note { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px; text-align:center; }
-    #note[hidden] { display:none; }
-    #note p { margin:0; color:var(--muted); max-width:36ch; }
-    #note a { color:var(--accent); font-weight:600; }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:20px; min-height:100vh; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+    main { max-width:480px; margin:40px auto; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:24px; }
+    h1 { font-size:1.25rem; margin:0 0 4px; }
+    p.sub { margin:0 0 20px; color:var(--muted); font-size:.9rem; }
+    label { display:block; font-weight:600; font-size:.9rem; margin:14px 0 6px; }
+    input, textarea { width:100%; padding:10px 12px; font:inherit; color:var(--ink); background:transparent; border:1px solid var(--line); border-radius:8px; }
+    input:focus, textarea:focus, button:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+    textarea { min-height:110px; resize:vertical; }
+    button { margin-top:18px; width:100%; padding:12px; font:inherit; font-weight:600; color:#fff; background:var(--accent); border:0; border-radius:8px; cursor:pointer; }
+    @media (prefers-color-scheme: dark) { button { color:#06210f; } }
+    button:disabled { opacity:.6; cursor:wait; }
+    #status { margin-top:16px; min-height:1.5em; font-size:.92rem; }
+    #status.ok { color:var(--accent); }
+    #status.err { color:var(--err); }
   </style>
 </head>
 <body>
-  <div id="note">
-    <p id="msg">Loading the app...</p>
-    <a id="direct" href="#" hidden>Open the app in a new tab</a>
-  </div>
+<main>
+  <h1>Send a WhatsApp message</h1>
+  <p class="sub">Sandbox users must send the join code to the Twilio number first.</p>
 
-  <iframe id="app" title="WhatsApp Sender" allow="clipboard-write" hidden></iframe>
+  <label for="to">Phone number</label>
+  <input id="to" type="tel" placeholder="+919876543210" autocomplete="off">
 
-  <script>
-    // 1. Paste your Apps Script web app URL (must end in /exec)
-    var APP_URL = "https://script.google.com/macros/s/AKfycbwdvdImWInQZZ-4LLlRVMoryrKF0Gu30U2xGDmimVZgdZCNzIBfU461QEKEw2SQIQwjMw/exec";
+  <label for="msg">Message</label>
+  <textarea id="msg" placeholder="Type your message"></textarea>
 
-    var frame = document.getElementById("app");
-    var note = document.getElementById("note");
-    var msg = document.getElementById("msg");
-    var direct = document.getElementById("direct");
-    var loaded = false;
+  <button id="send" type="button">Send message</button>
+  <div id="status" role="status" aria-live="polite"></div>
+</main>
 
-    direct.href = APP_URL;
+<script>
+  // 1. Paste your Apps Script /exec URL here.
+  // 2. Paste the same value you set for API_TOKEN in Script Properties.
+  var APP_URL   = "https://script.google.com/macros/s/AKfycbwdvdImWInQZZ-4LLlRVMoryrKF0Gu30U2xGDmimVZgdZCNzIBfU461QEKEw2SQIQwjMw/exec";
+  var API_TOKEN = "fa28d6c8-3621-4204-9c01-3927c947944d";
 
-    function fail(text) {
-      msg.textContent = text;
-      direct.hidden = false;
-      note.hidden = false;
-      frame.hidden = true;
-    }
+  var btn = document.getElementById('send');
+  var statusEl = document.getElementById('status');
 
-    if (APP_URL.indexOf("YOUR_DEPLOYMENT_ID") !== -1) {
-      fail("Set APP_URL in index.html to your Apps Script /exec link.");
-    } else {
-      frame.addEventListener("load", function () {
-        loaded = true;
-        note.hidden = true;
-        frame.hidden = false;
+  function show(text, cls) { statusEl.textContent = text; statusEl.className = cls || ''; }
+
+  btn.addEventListener('click', function () {
+    var to = document.getElementById('to').value.trim();
+    var msg = document.getElementById('msg').value.trim();
+    if (!to || !msg) { show('Enter a phone number and a message.', 'err'); return; }
+
+    btn.disabled = true;
+    show('Sending...');
+
+    var url = APP_URL
+      + '?action=send'
+      + '&to=' + encodeURIComponent(to)
+      + '&msg=' + encodeURIComponent(msg)
+      + '&token=' + encodeURIComponent(API_TOKEN);
+
+    fetch(url)
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        btn.disabled = false;
+        if (data.ok) {
+          show('Sent. Status: ' + data.status + ' (' + data.sid + ')', 'ok');
+        } else {
+          show(data.error || 'Send failed.', 'err');
+        }
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        show('Network error: ' + err.message, 'err');
       });
-      frame.src = APP_URL;
-
-      // If nothing loads in 12 seconds, show a fallback link
-      setTimeout(function () {
-        if (!loaded) fail("The app is taking too long or is blocked in this browser.");
-      }, 12000);
-    }
-  </script>
+  });
+</script>
 </body>
 </html>
