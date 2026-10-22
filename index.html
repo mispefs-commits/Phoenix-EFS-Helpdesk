@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhatsApp Sender</title>
+  <style>
+    :root { --bg:#f6f8f6; --ink:#16231c; --muted:#5d6b63; --accent:#0f7a4a; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#101612; --ink:#e8efea; --muted:#94a39a; --accent:#3ccf86; }
+    }
+    html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; }
+    iframe { display:block; border:0; width:100%; height:100%; }
+    #note { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:24px; text-align:center; }
+    #note[hidden] { display:none; }
+    #note p { margin:0; color:var(--muted); max-width:36ch; }
+    #note a { color:var(--accent); font-weight:600; }
+  </style>
+</head>
+<body>
+  <div id="note">
+    <p id="msg">Loading the app...</p>
+    <a id="direct" href="#" hidden>Open the app in a new tab</a>
+  </div>
+
+  <iframe id="app" title="WhatsApp Sender" allow="clipboard-write" hidden></iframe>
+
+  <script>
+    // 1. Paste your Apps Script web app URL (must end in /exec)
+    var APP_URL = "https://script.google.com/macros/s/AKfycbwdvdImWInQZZ-4LLlRVMoryrKF0Gu30U2xGDmimVZgdZCNzIBfU461QEKEw2SQIQwjMw/exec";
+
+    var frame = document.getElementById("app");
+    var note = document.getElementById("note");
+    var msg = document.getElementById("msg");
+    var direct = document.getElementById("direct");
+    var loaded = false;
+
+    direct.href = APP_URL;
+
+    function fail(text) {
+      msg.textContent = text;
+      direct.hidden = false;
+      note.hidden = false;
+      frame.hidden = true;
+    }
+
+    if (APP_URL.indexOf("YOUR_DEPLOYMENT_ID") !== -1) {
+      fail("Set APP_URL in index.html to your Apps Script /exec link.");
+    } else {
+      frame.addEventListener("load", function () {
+        loaded = true;
+        note.hidden = true;
+        frame.hidden = false;
+      });
+      frame.src = APP_URL;
+
+      // If nothing loads in 12 seconds, show a fallback link
+      setTimeout(function () {
+        if (!loaded) fail("The app is taking too long or is blocked in this browser.");
+      }, 12000);
+    }
+  </script>
+</body>
+</html>
