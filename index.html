@@ -5,173 +5,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#102344">
-  <title>Welcome to Phoenix EFS</title>
+  <title>Phoenix EFS |Helpdesk Management</title>
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html, body {
-      margin: 0;
+    html,
+    body {
+      width: 100%;
+      height: 100%;
       min-height: 100%;
+      overflow: hidden;
       font-family: "Segoe UI", Arial, sans-serif;
+      background: #ffffff;
     }
 
     body {
-      background: #f2f5fb;
-      color: #102344;
-    }
-
-    .top-bar {
-      height: 16px;
-      background: linear-gradient(110deg, #102344, #2458a6, #17447f);
-      box-shadow: 0 3px 12px rgba(16, 35, 68, 0.15);
-    }
-
-    .page {
-      width: 100%;
-      max-width: 1800px;
-      margin: auto;
-      padding: 26px 4.5% 20px;
-    }
-
-    .welcome h1 {
-      margin: 0;
-      font-size: clamp(25px, 3vw, 32px);
-      font-weight: 750;
-      letter-spacing: -0.5px;
-    }
-
-    .welcome h1 span {
-      color: #b77b19;
-    }
-
-    .welcome p {
-      margin: 10px 0 22px;
-      color: #687b98;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .workspace {
-      overflow: hidden;
-      background: #fff;
-      border: 1px solid #dce5f2;
-      border-radius: 15px;
-      box-shadow: 0 14px 35px rgba(29, 54, 91, 0.08);
-    }
-
-    .workspace-header {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      min-height: 55px;
-      padding: 15px 19px;
-      background: linear-gradient(180deg, #fff, #fbfcfe);
-      border-bottom: 1px solid #e1e8f2;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: #24ad72;
-      box-shadow: 0 0 0 5px #e5f7ee;
+      height: 100vh;
+      height: 100dvh;
     }
 
     .app-frame {
+      position: fixed;
+      inset: 0;
       width: 100%;
-      height: calc(100vh - 220px);
-      min-height: 550px;
-      background: #fff;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: #ffffff;
     }
 
     .app-frame iframe {
       display: block;
       width: 100%;
       height: 100%;
-      border: 0;
-      background: #fff;
-    }
-
-    .footer {
-      padding: 18px 10px;
-      text-align: center;
-      color: #7b879b;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-
-    .footer strong {
-      color: #304d77;
-    }
-
-    @media (max-width: 600px) {
-      .page {
-        padding: 22px 4% 15px;
-      }
-
-      .welcome p {
-        margin-bottom: 18px;
-      }
-
-      .app-frame {
-        height: 75vh;
-        min-height: 500px;
-      }
-
-      .workspace-header {
-        padding: 14px;
-      }
+      height: 100dvh;
+      border: none;
+      outline: none;
+      background: #ffffff;
     }
   </style>
 </head>
 
 <body>
-
-  <div class="top-bar"></div>
-
-  <main class="page">
-
-    <section class="welcome">
-      <h1>Welcome to <span>Phoenix EFS</span></h1>
-
-      <p>
-        Your integrated digital workspace for efficient operations,
-        seamless coordination and smarter facility management.
-      </p>
-    </section>
-
-    <section class="workspace">
-
-      <div class="workspace-header">
-        <span class="status-dot"></span>
-        <span>Application Workspace</span>
-      </div>
-
-      <div class="app-frame">
-        <iframe
-          src="https://script.google.com/macros/s/AKfycbw18TYy35Ucf8Kg8P_Q1jhC5pFiV729ZQZbBYn1d_wOuGyRwgg4dcBRWr-lgzaXUKT5AQ/exec"
-          title="Phoenix EFS Application"
-          loading="eager"
-          allow="clipboard-read; clipboard-write">
-        </iframe>
-      </div>
-
-    </section>
-
+  <main class="app-frame">
+    <iframe
+      src="https://script.google.com/macros/s/AKfycbw18TYy35Ucf8Kg8P_Q1jhC5pFiV729ZQZbBYn1d_wOuGyRwgg4dcBRWr-lgzaXUKT5AQ/exec"
+      title="Phoenix EFS Application"
+      allow="clipboard-read; clipboard-write"
+      allowfullscreen>
+    </iframe>
   </main>
-
-  <footer class="footer">
-    <strong>PHOENIX EFS</strong> | Integrated Facilities Management
-    <br>
-    Delivering operational excellence through technology.
-  </footer>
-
 </body>
 </html>
-```
+
